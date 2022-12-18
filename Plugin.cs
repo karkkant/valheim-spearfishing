@@ -1,4 +1,4 @@
-﻿using BepInEx;
+using BepInEx;
 using HarmonyLib;
 using UnityEngine;
 
@@ -40,22 +40,36 @@ namespace Spearfishing
                         if (harpooned)
                         {
                             __instance.m_owner.Message(MessageHud.MessageType.Center, fish.m_name + " $msg_harpoon_harpooned");
+                            
+                             var prefab = ZNetScene.instance.GetPrefab("fx_deatsquito_death");
+
+                            if ((bool)prefab)
+                                Instantiate(prefab, fish.transform.position, Quaternion.identity);
                         }
                     } 
                     
                     if(!harpooned)
                     {
                         var drop = fish.m_pickupItem.GetComponent<ItemDrop>();
+                        var floater = drop.gameObject.AddComponent<Floating>();
+
+                        drop.m_nview.ClaimOwnership();
+
+                        floater.m_waterLevelOffset = 0.65f;
+                        floater.SetLiquidLevel(fish.GetWaterLevel(fish.transform.position), LiquidType.Water, null);
                         drop.m_itemData.m_stack = fish.m_pickupItemStackSize;
-                        drop.gameObject.AddComponent<Floating>();
-                        UnityEngine.Object.Instantiate<ItemDrop>(drop, fish.GetTransform().position, Quaternion.identity);
+                        drop.m_floating = floater;
 
-                        ZNetView component = fish.GetComponent<ZNetView>();
+                        DestroyImmediate(fish);
 
-                        if ((bool)(UnityEngine.Object)component && component.IsValid())
-                        {
-                            component.Destroy();
-                        }
+                        __instance.m_hitEffects.Create(drop.transform.position, Quaternion.identity, null, 2, -1);
+
+                        var prefab = ZNetScene.instance.GetPrefab("fx_deatsquito_death");
+
+                        if ((bool)prefab)
+                            Instantiate(prefab, drop.transform.position, Quaternion.identity);
+
+                        drop.transform.Rotate(new Vector3(0, 0, Random.Range(-100, 100) > 0 ? 90 : -90));
                     }
                 }
 
