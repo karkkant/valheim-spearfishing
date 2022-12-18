@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Spearfishing
 {
-    [BepInPlugin("org.bepinex.plugins.spearfishing", "Spearfishing", "1.0.0")]
+    [BepInPlugin("org.bepinex.plugins.spearfishing", "Spearfishing", "1.0.1")]
     public class Plugin : BaseUnityPlugin
     {
         private readonly Harmony _harmony = new Harmony("org.bepinex.plugins.spearfishing");

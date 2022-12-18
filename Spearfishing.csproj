@@ -4,7 +4,7 @@
     <TargetFramework>net46</TargetFramework>
     <AssemblyName>Spearfishing</AssemblyName>
     <Description></Description>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <Company />
@@ -31,6 +31,9 @@
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>..\libs\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_guiutils">
+      <HintPath>..\libs\assembly_guiutils.dll</HintPath>
     </Reference>
     <Reference Include="assembly_valheim">
       <HintPath>..\libs\assembly_valheim.dll</HintPath>
