@@ -4,10 +4,11 @@ using UnityEngine;
 
 namespace Spearfishing
 {
-    [BepInPlugin("org.bepinex.plugins.spearfishing", "Spearfishing", "1.0.1")]
+    [BepInPlugin("org.bepinex.plugins.spearfishing", "Spearfishing", "1.0.2")]
     public class Plugin : BaseUnityPlugin
     {
         private readonly Harmony _harmony = new Harmony("org.bepinex.plugins.spearfishing");
+        private static readonly int _SE_harpooned_hash = "Harpooned".GetStableHashCode();
 
         private void Awake()
         {
@@ -24,7 +25,7 @@ namespace Spearfishing
                 GameObject go = (bool)(UnityEngine.Object)collider ? Projectile.FindHitObject(collider) : (GameObject)null;
                 Fish fish = go?.GetComponent<Fish>();
 
-                if (fish == null || fish.IsOutOfWater()) return true;
+                if(fish == null || fish.IsOutOfWater()) return true;
 
                 if(fish.m_speed > 0f)
                 {
@@ -33,7 +34,7 @@ namespace Spearfishing
 
                     var harpooned = false;
 
-                    if(__instance.m_statusEffect.Equals("Harpooned"))
+                    if(__instance.m_statusEffectHash == _SE_harpooned_hash)
                     {
                         harpooned = fish.Pickup((Humanoid)__instance.m_owner);
 
