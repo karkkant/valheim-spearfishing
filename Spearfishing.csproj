@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net46</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
     <AssemblyName>Spearfishing</AssemblyName>
     <Description></Description>
     <Version>1.0.3</Version>
@@ -19,9 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
-    <PackageReference Include="BepInEx.Core" Version="5.4.21" />
-    <PackageReference Include="BepInEx.PluginInfoProps" Version="1.*" />
+    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.34.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
@@ -42,7 +43,10 @@
       <HintPath>..\libs\assembly_valheim.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx">
-      <HintPath>libs\BepInEx.dll</HintPath>
+      <HintPath>..\libs\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="ServerSync">
+      <HintPath>libs\ServerSync.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\libs\UnityEngine.dll</HintPath>

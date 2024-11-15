@@ -1,15 +1,23 @@
 using BepInEx;
 using BepInEx.Configuration;
 using HarmonyLib;
+using ServerSync;
 using UnityEngine;
 
 namespace Spearfishing
 {
-    [BepInPlugin("org.bepinex.plugins.spearfishing", "Spearfishing", "1.0.3")]
+    [BepInPlugin(pluginId, pluginName, pluginVersion)]
     public class Plugin : BaseUnityPlugin
     {
-        private readonly Harmony _harmony = new Harmony("org.bepinex.plugins.spearfishing");
+        const string pluginId = "org.bepinex.plugins.spearfishing";
+        const string pluginName = "Spearfishing";
+        const string pluginVersion = "1.0.4";
+
+        private readonly Harmony _harmony = new Harmony(pluginId);
         private static readonly int _SE_harpooned_hash = "Harpooned".GetStableHashCode();
+
+        ConfigSync configSync = new ConfigSync(pluginId) { DisplayName = pluginName, CurrentVersion = pluginVersion, MinimumRequiredVersion = pluginVersion };
+        private static ConfigEntry<bool> LockConfig;
         private static ConfigEntry<bool> EnableHarpoons;
         private static ConfigEntry<bool> EnableSpears;
         private static ConfigEntry<bool> EnableBows;
@@ -17,12 +25,31 @@ namespace Spearfishing
 
         private void Awake()
         {
-            EnableHarpoons = Config.Bind("General", "EnableHarpoons", true, "Enable fishing with harpoon");
-            EnableSpears = Config.Bind("General", "EnableSpears", true, "Enable fishing with spears");
-            EnableBows = Config.Bind("General", "EnableBows", true, "Enable fishing with bows");
-            EnableCrossbows = Config.Bind("General", "EnableCrossbows", true, "Enable fishing with crossbows");
+            LockConfig = config("General", "LockConfig", true, "If on, the configuration is locked and can be changed by server admins only. [Synced with server]");
+            EnableHarpoons = config("General", "EnableHarpoons", true, "Enable fishing with harpoon");
+            EnableSpears = config("General", "EnableSpears", true, "Enable fishing with spears");
+            EnableBows = config("General", "EnableBows", true, "Enable fishing with bows");
+            EnableCrossbows = config("General", "EnableCrossbows", true, "Enable fishing with crossbows");
+
+            _ = configSync.AddLockingConfigEntry(LockConfig);
             _harmony.PatchAll();
         }
+
+        #region ServerSync
+
+        ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description, bool synchronizedSetting = true)
+        {
+            ConfigEntry<T> configEntry = Config.Bind(group, name, value, description);
+
+            SyncedConfigEntry<T> syncedConfigEntry = configSync.AddConfigEntry(configEntry);
+            syncedConfigEntry.SynchronizedConfig = synchronizedSetting;
+
+            return configEntry;
+        }
+
+        ConfigEntry<T> config<T>(string group, string name, T value, string description, bool synchronizedSetting = true) => config(group, name, value, new ConfigDescription(description), synchronizedSetting);
+
+        #endregion
 
         public static bool IsEnabledProjectile(string projectile)
         {
